@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 import logging
 
 logger = logging.getLogger(__name__)
-load_dotenv()
+load_dotenv(dotenv_path="config/.env")
 
 DB_HOST = os.getenv("DB_HOST")
 DB_NAME = os.getenv("DB_NAME")
