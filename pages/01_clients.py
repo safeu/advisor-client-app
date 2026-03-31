@@ -11,26 +11,9 @@ Script purpose:
 import streamlit as st
 import pandas as pd
 from utils.db_connection import connect_to_database
+from utils.queries import get_clients, add_client, delete_client
 
 st.title("Clients")
-
-
-def get_clients():
-    conn = connect_to_database()
-    cursor = conn.cursor()
-    cursor.execute("SELECT id, full_name, created_at FROM clients ORDER BY full_name ASC")
-    rows = cursor.fetchall()
-    cursor.close()
-    conn.close()
-    return rows
-
-def add_client(full_name):
-    conn = connect_to_database()
-    cursor = conn.cursor()
-    cursor.execute("INSERT INTO clients (full_name) VALUES (%s)", (full_name,))
-    conn.commit()
-    cursor.close()
-    conn.close()
 
 clients = get_clients()
 
@@ -38,14 +21,32 @@ if len(clients) == 0:
     st.info("No clients yet. Add one below!")
 else:
     for client in clients:
-        col1, col2 = st.columns([3, 1])
+        col1, col2, col3 = st.columns([3, 1, 1])
         with col1:
-            st.write(client[1])  # full_name
+            st.write(client[1])
         with col2:
             if st.button("View", key=client[0]):
                 st.session_state["selected_client_id"] = client[0]
                 st.session_state["selected_client_name"] = client[1]
                 st.switch_page("pages/02_client_detail.py")
+        with col3:
+            if st.button("Delete", key=f"delete_{client[0]}"):
+                st.session_state["confirm_delete"] = client[0]
+
+if st.session_state.get("confirm_delete"):
+    client_id_to_delete = st.session_state["confirm_delete"]
+    st.warning(f"Are you sure you want to delete this client? This will delete all their data")
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("Yes, delete"):
+            delete_client(client_id_to_delete)
+            st.session_state["confirm_delete"] = None
+            st.success("Client deleted!")
+            st.rerun()
+    with col2:
+        if st.button("Cancel"):
+            st.session_state["confirm_delete"] = None
+            st.rerun()
 
 st.subheader("Add New Client")
 with st.form("add_client_form"):

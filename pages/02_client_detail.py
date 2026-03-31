@@ -11,7 +11,7 @@ Script purpose:
 import streamlit as st
 import pandas as pd
 from utils.db_connection import connect_to_database
-from utils.queries import get_policy, get_fund_info, get_riders, get_payments, update_policy, update_payment, add_payment, update_fund_info, add_policy, add_fund_info, add_rider
+from utils.queries import get_policy, get_fund_info, get_riders, get_payments, update_policy, update_payment, add_payment, update_fund_info, add_policy, add_fund_info, add_rider, update_rider
 
 if "selected_client_id" not in st.session_state:
     st.switch_page("pages/01_clients.py")
@@ -191,6 +191,23 @@ else:
     df_riders = pd.DataFrame(riders, columns=["ID", "Policy ID", "Rider Name", "Amount", "Active"])
     st.dataframe(df_riders[["Rider Name", "Amount", "Active"]], use_container_width=True)
 
+with st.expander("Edit Rider"):
+    if len(riders) == 0:
+        st.info("No riders to edit yet.")
+    else:
+        rider_options = {f"{r[2]} - ₱{r[3]:,.2f}": r for r in riders}
+        selected_label = st.selectbox("Select rider to edit", list(rider_options.keys()))
+        selected_rider = rider_options[selected_label]
+
+        with st.form("edit_rider_form"):
+            rider_name = st.text_input("Rider Name", value=selected_rider[2] or "")
+            rider_amount = st.number_input("Amount", value=float(selected_rider[3] or 0), format="%g")
+            save = st.form_submit_button("Save Changes")
+            if save:
+                update_rider(selected_rider[0], rider_name, rider_amount)
+                st.success("Rider updated")
+                st.rerun()
+
 with st.expander("Add New Rider"):
     with st.form("add_rider_form"):
         rider_name = st.text_input("Rider Name")
@@ -198,7 +215,7 @@ with st.expander("Add New Rider"):
         submitted = st.form_submit_button("Add Rider")
         if submitted:
             if rider_name.strip() == "":
-                st.error("Please enter a rider name!")
+                st.error("Please enter a rider name")
             else:
                 add_rider(policy_id, rider_name, rider_amount)
                 st.success("Rider added!")

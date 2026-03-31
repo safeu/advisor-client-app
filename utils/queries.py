@@ -5,6 +5,9 @@ Scripts for querying data
 Script purpose:
     Query the data needed for 02_client_detail.py file. 
 
+Note: 
+    The queries here are only for main.py and 02_client_detail.py, it excludes
+    01_clients.    
 """
 
 from utils.db_connection import connect_to_database
@@ -12,6 +15,93 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
+### MAIN PAge Queries
+def total_clients():
+    try:
+        conn = connect_to_database()
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM clients")
+        row = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        return row
+    except Exception as e:
+        logger.error(f"Error getting total clients: {e}")
+        raise
+
+def total_missed_payments():
+    try:
+        conn = connect_to_database()
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM payments WHERE status = 'Missed'")
+        rows = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        return rows
+    
+    except Exception as e:
+        logger.error(f"Error getting total missed payments: {e}")
+        raise
+
+
+def total_payments_due():
+    try:
+        conn = connect_to_database()
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM payments WHERE status = 'DUE'")
+        rows = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        return rows
+    
+    except Exception as e:
+        logger.error(f"Error getting total due payments: {e}")
+        raise
+
+
+
+### 01_clients Queries
+def get_clients():
+    try:
+        conn = connect_to_database()
+        cursor = conn.cursor()
+        cursor.execute("SELECT id, full_name, created_at FROM clients ORDER BY full_name ASC")
+        rows = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return rows
+    except Exception as e:
+        logger.error(f"Error getting clients: {e}")
+        raise
+
+def add_client(full_name):
+    try:
+        conn = connect_to_database()
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO clients (full_name) VALUES (%s)", (full_name,))
+        conn.commit()
+        cursor.close()
+        conn.close()
+    except Exception as e:
+        logger.error(f"Error adding client: {e}")
+        raise
+
+def delete_client(client_id):
+    try:
+        conn = connect_to_database()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM clients WHERE id = %s", (client_id,))
+        conn.commit()
+        cursor.close()
+        conn.close()
+    except Exception as e:
+        logger.error(f"Error deleting client: {e}")
+        raise
+
+
+
+### 02_client_detail Queries
 def get_policy(client_id):
     try:
         conn = connect_to_database()
@@ -184,47 +274,19 @@ def add_rider(policy_id, rider_name, amount):
         logger.error(f"Error adding rider: {e}")
         raise
 
-
-
-### HOME PAGE QUeries
-def total_clients():
+def update_rider(rider_id, rider_name, amount):
     try:
         conn = connect_to_database()
         cursor = conn.cursor()
-        cursor.execute("SELECT COUNT(*) FROM clients")
-        row = cursor.fetchone()
+        cursor.execute("""
+            UPDATE riders SET
+                rider_name = %s, 
+                amount = %s
+            WHERE id = %s
+        """, (rider_name, amount, rider_id))
+        conn.commit()
         cursor.close()
         conn.close()
-        return row
     except Exception as e:
-        logger.error(f"Error getting total clients: {e}")
-        raise
-
-def total_missed_payments():
-    try:
-        conn = connect_to_database()
-        cursor = conn.cursor()
-        cursor.execute("SELECT COUNT(*) FROM payments WHERE status = 'Missed'")
-        rows = cursor.fetchone()
-        cursor.close()
-        conn.close()
-        return rows
-    
-    except Exception as e:
-        logger.error(f"Error getting total missed payments: {e}")
-        raise
-
-
-def total_payments_due():
-    try:
-        conn = connect_to_database()
-        cursor = conn.cursor()
-        cursor.execute("SELECT COUNT(*) FROM payments WHERE status = 'DUE'")
-        rows = cursor.fetchone()
-        cursor.close()
-        conn.close()
-        return rows
-    
-    except Exception as e:
-        logger.error(f"Error getting total due payments: {e}")
+        logger.error(f"Error updating rider: {e}")
         raise

@@ -30,7 +30,7 @@ CREATE TABLE clients (
 -- the policty details
 CREATE TABLE policies (
     id SERIAL PRIMARY KEY,
-    client_id INT REFERENCES clients(id),
+    client_id INT REFERENCES clients(id) ON DELETE CASCADE,
     plan_name VARCHAR(200),
     policy_number VARCHAR(100) UNIQUE,
     issue_date DATE,
@@ -51,7 +51,7 @@ CREATE TABLE policies (
 -- for fund infos
 CREATE TABLE fund_info (
     id SERIAL PRIMARY KEY,
-    policy_id INT REFERENCES policies(id),
+    policy_id INT REFERENCES policies(id) ON DELETE CASCADE,
     current_fund_value NUMERIC(15,2),
     fund_name VARCHAR(200),
     fund_allocation_pct NUMERIC(5,2),
@@ -65,7 +65,7 @@ CREATE TABLE fund_info (
 -- for policy rider
 CREATE TABLE riders (
     id SERIAL PRIMARY KEY,
-    policy_id INT REFERENCES policies(id),
+    policy_id INT REFERENCES policies(id) ON DELETE CASCADE,
     rider_name VARCHAR(200),
     amount NUMERIC(15,2),
     is_active BOOLEAN DEFAULT TRUE
@@ -75,7 +75,7 @@ CREATE TABLE riders (
 -- for transaction history
 CREATE TABLE payments (
     id SERIAL PRIMARY KEY,
-    policy_id INT REFERENCES policies(id),
+    policy_id INT REFERENCES policies(id) ON DELETE CASCADE,
     year_number INT,
     due_date DATE,
     amount NUMERIC(15,2),
