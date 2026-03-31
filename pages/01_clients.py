@@ -37,9 +37,15 @@ clients = get_clients()
 if len(clients) == 0:
     st.info("No clients yet. Add one below!")
 else:
-    df = pd.DataFrame(clients, columns=["ID", "Name", "Date Added"])
-    st.dataframe(df, use_container_width=True)
-
+    for client in clients:
+        col1, col2 = st.columns([3, 1])
+        with col1:
+            st.write(client[1])  # full_name
+        with col2:
+            if st.button("View", key=client[0]):
+                st.session_state["selected_client_id"] = client[0]
+                st.session_state["selected_client_name"] = client[1]
+                st.switch_page("pages/02_client_detail.py")
 
 st.subheader("Add New Client")
 with st.form("add_client_form"):

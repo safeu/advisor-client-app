@@ -6,8 +6,18 @@ Script purpose:
     This script creates database schemas for the database created in PostgreSQL
     (Supabase)
 
+Warning:
+    If this script is ran... it would delete/drop all the tables and create a new one.
+    Leading to deletion of all data within the table.
+    
+    Delete the DROP TABLE commands if needed.
 */
 
+DROP TABLE IF EXISTS payments;
+DROP TABLE IF EXISTS riders;
+DROP TABLE IF EXISTS fund_info;
+DROP TABLE IF EXISTS policies;
+DROP TABLE IF EXISTS clients;
 
 --for client details
 CREATE TABLE clients (
@@ -21,7 +31,7 @@ CREATE TABLE clients (
 CREATE TABLE policies (
     id SERIAL PRIMARY KEY,
     client_id INT REFERENCES clients(id),
-    plan_name VARCHAR(200) NOT NULL,
+    plan_name VARCHAR(200),
     policy_number VARCHAR(100) UNIQUE,
     issue_date DATE,
     face_amount NUMERIC(15,2),
