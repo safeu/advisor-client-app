@@ -183,3 +183,48 @@ def add_rider(policy_id, rider_name, amount):
     except Exception as e:
         logger.error(f"Error adding rider: {e}")
         raise
+
+
+
+### HOME PAGE QUeries
+def total_clients():
+    try:
+        conn = connect_to_database()
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM clients")
+        row = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        return row
+    except Exception as e:
+        logger.error(f"Error getting total clients: {e}")
+        raise
+
+def total_missed_payments():
+    try:
+        conn = connect_to_database()
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM payments WHERE status = 'Missed'")
+        rows = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        return rows
+    
+    except Exception as e:
+        logger.error(f"Error getting total missed payments: {e}")
+        raise
+
+
+def total_payments_due():
+    try:
+        conn = connect_to_database()
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM payments WHERE status = 'DUE'")
+        rows = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        return rows
+    
+    except Exception as e:
+        logger.error(f"Error getting total due payments: {e}")
+        raise
