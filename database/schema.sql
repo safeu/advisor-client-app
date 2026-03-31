@@ -1,0 +1,75 @@
+/*
+===========================================================
+Create database schema for the application.
+===========================================================
+Script purpose:
+    This script creates database schemas for the database created in PostgreSQL
+    (Supabase)
+
+*/
+
+
+--for client details
+CREATE TABLE clients (
+    id SERIAL PRIMARY KEY,
+    full_name VARCHAR(200) NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+
+-- the policty details
+CREATE TABLE policies (
+    id SERIAL PRIMARY KEY,
+    client_id INT REFERENCES clients(id),
+    plan_name VARCHAR(200) NOT NULL,
+    policy_number VARCHAR(100) UNIQUE,
+    issue_date DATE,
+    face_amount NUMERIC(15,2),
+    sum_assured NUMERIC(15,2),
+    policy_duration VARCHAR(100),
+    years_to_pay INT,
+    remaining_years NUMERIC(5,2),
+    status VARCHAR(50),
+    premium_due DATE,
+    mode_of_payment VARCHAR(50),
+    premium_amount NUMERIC(15,2),
+    total_annual_premium NUMERIC(15,2),
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+
+-- for fund infos
+CREATE TABLE fund_info (
+    id SERIAL PRIMARY KEY,
+    policy_id INT REFERENCES policies(id),
+    current_fund_value NUMERIC(15,2),
+    fund_name VARCHAR(200),
+    fund_allocation_pct NUMERIC(5,2),
+    cost_of_insurance NUMERIC(15,2),
+    as_of_date DATE,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+
+
+-- for policy rider
+CREATE TABLE riders (
+    id SERIAL PRIMARY KEY,
+    policy_id INT REFERENCES policies(id),
+    rider_name VARCHAR(200),
+    amount NUMERIC(15,2),
+    is_active BOOLEAN DEFAULT TRUE
+);
+
+
+-- for transaction history
+CREATE TABLE payments (
+    id SERIAL PRIMARY KEY,
+    policy_id INT REFERENCES policies(id),
+    year_number INT,
+    due_date DATE,
+    amount NUMERIC(15,2),
+    date_paid DATE,
+    status VARCHAR(50),
+    created_at TIMESTAMP DEFAULT NOW()
+);
