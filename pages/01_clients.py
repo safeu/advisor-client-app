@@ -13,6 +13,9 @@ import pandas as pd
 from utils.db_connection import connect_to_database
 from utils.queries import get_clients, add_client, delete_client
 
+if not st.session_state.get("logged_in"):
+    st.switch_page("main.py")
+
 st.title("Clients")
 
 clients = get_clients()

@@ -13,6 +13,9 @@ import pandas as pd
 from utils.db_connection import connect_to_database
 from utils.queries import get_policy, get_fund_info, get_riders, get_payments, update_policy, update_payment, add_payment, update_fund_info, add_policy, add_fund_info, add_rider, update_rider
 
+if not st.session_state.get("logged_in"):
+    st.switch_page("main.py")
+
 if "selected_client_id" not in st.session_state:
     st.switch_page("pages/01_clients.py")
 
