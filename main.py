@@ -9,9 +9,10 @@ Script purpose:
 """
 
 import streamlit as st
-from utils.queries import total_clients, total_missed_payments, total_payments_due
+from utils.queries import total_clients, total_missed_payments, total_payments_due, get_due_payments, get_missed_payments
 from dotenv import load_dotenv
 import os
+import pandas as pd
 
 load_dotenv(dotenv_path="config/.env")
 
@@ -59,6 +60,29 @@ with col3:
 st.divider()
 st.write("Select a client from the **Clients** page to view or edit their policy details.")
 
+st.divider()
+
+due_payments = get_due_payments()
+missed_payments = get_missed_payments()
+
+if len(due_payments) > 0:
+    st.subheader("⚠️ Payments Due")
+    df_due = pd.DataFrame(due_payments, columns=["Client", "Due Date", "Amount"])
+    st.dataframe(df_due, use_container_width=True, hide_index=True)
+else:
+    st.success("No payments due!")
+
+st.divider()
+
+if len(missed_payments) > 0:
+    st.subheader("🚨 Missed Payments")
+    df_missed = pd.DataFrame(missed_payments, columns=["Client", "Due Date", "Amount"])
+    st.dataframe(df_missed, use_container_width=True, hide_index=True)
+else:
+    st.success("No missed payments!")
+
+
+st.divider()
 
 if st.button("Logout"):
     st.session_state["logged_in"] = False

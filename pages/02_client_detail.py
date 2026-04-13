@@ -274,7 +274,7 @@ with st.expander("Add New Payment"):
         year_number = st.number_input("Year Number", min_value=1, step=1, format="%g")
         due_date = st.date_input("Due Date")
         amount = st.number_input("Amount", min_value=0.0, format="%g")
-        date_paid = st.date_input("Date Paid")
+        date_paid = st.date_input("Date Paid", value=None)
         status = st.selectbox("Status", ["Paid", "Missed", "DUE", "--"])
         submitted = st.form_submit_button("Add Payment")
         if submitted:

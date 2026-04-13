@@ -290,3 +290,56 @@ def update_rider(rider_id, rider_name, amount):
     except Exception as e:
         logger.error(f"Error updating rider: {e}")
         raise
+
+def get_due_payments():
+    try:
+        conn = connect_to_database()
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT 
+                c.full_name, 
+                p.due_date, 
+                p.amount 
+            FROM clients c 
+            JOIN policies po 
+                ON c.id = po.client_id 
+            JOIN payments p 
+                ON po.id = p.policy_id 
+            WHERE p.status = 'DUE' 
+            """)
+        rows = cursor.fetchall()
+        cursor.close()
+        conn.close()
+
+        return rows
+    
+    except Exception as e:
+        logger.error(f"Error fetching due payments: {e}")
+        raise
+
+def get_missed_payments():
+    try:
+        conn = connect_to_database()
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT 
+                c.full_name, 
+                p.due_date, 
+                p.amount 
+            FROM clients c 
+            JOIN policies po 
+                ON c.id = po.client_id 
+            JOIN payments p 
+                ON po.id = p.policy_id 
+            WHERE p.status = 'Missed' 
+            """)
+        rows = cursor.fetchall()
+        cursor.close()
+        conn.close()
+
+        return rows
+    
+    except Exception as e:
+        logger.error(f"Error fetching missed payments: {e}")
+        raise
+        
