@@ -20,10 +20,22 @@ st.title("Clients")
 
 clients = get_clients()
 
+search = st.text_input("Search clients")
+search_lower = search.lower()
+
+if search_lower:
+    filtered_clients = [
+        c for c in clients
+        if search_lower in c[1].lower()
+    ]
+else:
+    filtered_clients = clients
+
+
 if len(clients) == 0:
     st.info("No clients yet. Add one below!")
 else:
-    for client in clients:
+    for client in filtered_clients:
         col1, col2, col3 = st.columns([3, 1, 1])
         with col1:
             st.write(client[1])
