@@ -22,11 +22,17 @@ if "selected_client_id" not in st.session_state:
 client_id = st.session_state["selected_client_id"]
 client_name = st.session_state["selected_client_name"]
 
-if st.button("← Back to Clients"):
-    st.switch_page("pages/01_clients.py")
+col1, col2 = st.columns(2)
+
+with col1:
+    if st.button("← Back to Clients"):
+        st.switch_page("pages/01_clients.py")
+with col2:
+    if st.button("📋 Generate Report Summary"):
+        st.switch_page("pages/03_report_summary.py")
+
 
 st.title(client_name)
-
 
 
 policy = get_policy(client_id)
