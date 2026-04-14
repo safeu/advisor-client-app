@@ -79,8 +79,8 @@ if st.session_state.get("editing_plan"):
         face_amount = st.number_input("Face Amount", value=float(policy[5] or 0), format="%g")
         sum_assured = st.number_input("Sum Assured", value=float(policy[6] or 0), format="%g")
         policy_duration = st.text_input("Policy Duration", value=policy[7] or "")
-        years_to_pay = st.number_input("Years to Pay", value=int(policy[8] or 0), step=1, format="%g")
-        remaining_years = st.number_input("Remaining Years", value=float(policy[9] or 0), format="%g")
+        years_to_pay = st.text_input("Years to Pay", value=str(policy[8] or ""))
+        remaining_years = st.text_input("Remaining Years", value=str(policy[9] or ""))
         col_save, col_cancel = st.columns(2)
         with col_save:
             save = st.form_submit_button("Save")
